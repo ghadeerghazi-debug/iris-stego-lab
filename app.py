@@ -368,6 +368,22 @@ def classify_message(message: str = Form(...), lang: str = Form("en")):
         raise HTTPException(400, str(e))
 
 
+# ---------------------------------------------------------------- PWA assets
+
+@app.get("/manifest.webmanifest")
+def manifest():
+    return FileResponse(BASE / "static" / "manifest.webmanifest",
+                        media_type="application/manifest+json")
+
+
+@app.get("/sw.js")
+def service_worker():
+    # served from root so its scope covers the whole app
+    return FileResponse(BASE / "static" / "sw.js", media_type="text/javascript",
+                        headers={"Cache-Control": "no-cache",
+                                 "Service-Worker-Allowed": "/"})
+
+
 # ---------------------------------------------------------------- static
 
 app.mount("/", StaticFiles(directory=BASE / "static", html=True), name="static")

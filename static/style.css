@@ -206,6 +206,18 @@ footer p { font-size: 13px; font-style: italic; color: var(--ink-faint); margin-
 }
 .toast.error { background: var(--crimson-deep); }
 
+/* ————— PWA install button + standalone safe areas ————— */
+.install-btn {
+  margin-top: 16px; font-size: 12px; padding: 9px 18px;
+  background: var(--crimson); border-color: var(--crimson);
+}
+.install-btn:hover:not(:disabled) { background: var(--crimson-deep); border-color: var(--crimson-deep); }
+
+@media (display-mode: standalone) {
+  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  .install-btn { display: none !important; }
+}
+
 /* ————— explanatory notes (for Nada) ————— */
 .explain {
   margin: 0 0 20px; border: 1px solid var(--rule); border-left: 4px solid var(--teal);

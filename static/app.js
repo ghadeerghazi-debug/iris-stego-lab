@@ -2,6 +2,35 @@
 const $ = (s) => document.querySelector(s);
 const state = { runId: null, keys: [] };
 
+// ————————————————————————————— PWA: service worker + install
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () =>
+    navigator.serviceWorker.register("/sw.js").catch(() => {}));
+}
+let deferredInstall = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstall = e;
+  const b = document.querySelector("#btn-install");
+  if (b) b.hidden = false;
+});
+window.addEventListener("appinstalled", () => {
+  const b = document.querySelector("#btn-install");
+  if (b) b.hidden = true;
+  deferredInstall = null;
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const b = document.querySelector("#btn-install");
+  if (!b) return;
+  b.addEventListener("click", async () => {
+    if (!deferredInstall) return;
+    deferredInstall.prompt();
+    await deferredInstall.userChoice;
+    deferredInstall = null;
+    b.hidden = true;
+  });
+});
+
 // ————————————————————————————— helpers
 async function api(path, opts = {}) {
   const res = await fetch(path, opts);
