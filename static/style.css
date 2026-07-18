@@ -206,6 +206,72 @@ footer p { font-size: 13px; font-style: italic; color: var(--ink-faint); margin-
 }
 .toast.error { background: var(--crimson-deep); }
 
+/* ————— bilingual primer / "how it works" section ————— */
+:root { --arabic: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif; }
+
+.primer-card {
+  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+  box-shadow: var(--shadow); padding: 24px 26px; margin-bottom: 22px;
+}
+.primer-card.highlight { border-left: 4px solid var(--crimson); background: linear-gradient(180deg, #fbf8f0, #f6efe0); }
+
+.bilingual { display: grid; grid-template-columns: 1fr 1fr; gap: 26px 34px; }
+.bilingual .col-en { border-right: 1px dotted var(--rule); padding-right: 30px; }
+.col-ar { font-family: var(--arabic); }
+.col-ar * { font-family: var(--arabic); }
+
+.primer-h { font-family: var(--serif); font-size: 20px; font-weight: 600; margin-bottom: 12px; color: var(--ink); }
+.col-ar .primer-h { font-family: var(--arabic); font-weight: 700; }
+.primer-list { padding-inline-start: 20px; display: flex; flex-direction: column; gap: 9px; }
+.primer-list li { font-size: 15.5px; line-height: 1.6; color: var(--ink-soft); }
+.primer-list strong { color: var(--ink); font-weight: 600; }
+.primer-list code, .primer-key code, .primer-analogy code { font-family: var(--mono); font-size: 13px; color: var(--teal); }
+.col-ar .primer-list code { font-family: var(--mono); }
+.primer-key {
+  font-size: 16px; font-weight: 500; color: var(--crimson-deep);
+  background: #fff; border: 1px solid var(--rule); border-radius: 3px; padding: 10px 14px; margin-bottom: 12px;
+}
+.primer-analogy {
+  margin-top: 14px; font-style: italic; font-size: 15px; color: var(--ink-soft);
+  border-top: 1px dashed var(--rule); padding-top: 12px;
+}
+.col-ar .primer-analogy { font-style: normal; }
+
+/* data-flow diagram */
+.flow-diagram {
+  display: flex; align-items: stretch; justify-content: center; flex-wrap: wrap; gap: 10px;
+  padding: 22px; background: var(--ink); border-radius: 4px; margin-top: 4px;
+}
+.flow-node {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  background: var(--paper); border-radius: 4px; padding: 14px 18px; min-width: 150px;
+}
+.flow-ic { font-size: 26px; }
+.flow-node .flow-en { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+.flow-node .flow-ar { font-family: var(--arabic); font-size: 12px; color: var(--crimson); line-height: 1.4; }
+.flow-node small { color: var(--ink-faint); font-weight: 400; }
+.flow-arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  color: var(--paper); font-size: 20px; min-width: 78px;
+}
+.flow-arrow .flow-en { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #c9bda6; }
+.flow-arrow .flow-ar { font-family: var(--arabic); font-size: 11px; color: #d9a6a6; }
+
+@media (max-width: 720px) {
+  .bilingual { grid-template-columns: 1fr; }
+  .bilingual .col-en { border-right: none; border-bottom: 1px dotted var(--rule); padding-right: 0; padding-bottom: 20px; }
+  .flow-arrow { transform: rotate(90deg); min-width: auto; }
+}
+
+/* ————— per-step Arabic notes (injected) ————— */
+.explain-body .ex-ar {
+  font-family: var(--arabic); direction: rtl; text-align: right;
+  border-top: 1px dashed var(--rule); margin-top: 14px; padding-top: 12px;
+}
+.explain-body .ex-ar * { font-family: var(--arabic); }
+.explain-body .ex-ar .ex-q { color: var(--crimson); }
+.explain > summary .sum-ar { font-family: var(--arabic); color: var(--ink-faint); }
+
 /* ————— PWA install button + standalone safe areas ————— */
 .install-btn {
   margin-top: 16px; font-size: 12px; padding: 9px 18px;

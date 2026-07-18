@@ -1,5 +1,5 @@
 /* Iris-Stego Lab — service worker (offline app shell) */
-const CACHE = "iris-stego-v1";
+const CACHE = "iris-stego-v2";
 const SHELL = [
   "/",
   "/index.html",
@@ -31,23 +31,21 @@ self.addEventListener("fetch", (e) => {
   // Never touch the API or non-GET (POST uploads, form posts) — always live.
   if (req.method !== "GET" || url.pathname.startsWith("/api/")) return;
 
-  // HTML navigations: network-first so updates land, cache fallback offline.
+  // HTML navigations: network-first, cache fallback offline.
   if (req.mode === "navigate") {
     e.respondWith(
       fetch(req)
         .then((res) => { caches.open(CACHE).then((c) => c.put("/", res.clone())); return res; })
-        .catch(() => caches.match("/") .then((r) => r || caches.match("/index.html")))
+        .catch(() => caches.match("/").then((r) => r || caches.match("/index.html")))
     );
     return;
   }
 
-  // Static assets: cache-first, refresh in background (stale-while-revalidate).
+  // Everything else (app.js, style.css, icons): network-first so updates always
+  // land when online; fall back to cache only when offline.
   e.respondWith(
-    caches.match(req).then((cached) => {
-      const network = fetch(req)
-        .then((res) => { caches.open(CACHE).then((c) => c.put(req, res.clone())); return res; })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(req)
+      .then((res) => { caches.open(CACHE).then((c) => c.put(req, res.clone())); return res; })
+      .catch(() => caches.match(req))
   );
 });

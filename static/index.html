@@ -17,7 +17,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -42,6 +42,82 @@
 </header>
 
 <main>
+
+<!-- ============================ PRIMER : HOW IT WORKS =============== -->
+<section class="chapter" id="ch-primer">
+  <div class="chapter-head">
+    <span class="chapter-no">✦</span>
+    <h2>How It All Works · كيف يعمل النظام</h2>
+    <p>The full pipeline end-to-end — and how the trained models travel from the research PC into this website. · المسار الكامل، وكيف تنتقل النماذج المدرَّبة من حاسوب الباحثة إلى هذا الموقع.</p>
+  </div>
+
+  <!-- Part 1: the pipeline -->
+  <div class="primer-card">
+    <div class="bilingual">
+      <div class="col-en">
+        <h3 class="primer-h">Part 1 — The pipeline, step by step</h3>
+        <ol class="primer-list">
+          <li><strong>Identify the sender</strong> by their iris — the biometric replaces a username.</li>
+          <li><strong>Vet the message</strong> — is it authentic or fake? (English or Arabic classifier.)</li>
+          <li><strong>Hide the message</strong> inside an ordinary image so no one suspects it exists (steganography).</li>
+          <li><strong>Encrypt the image</strong> using the biometric as the key — faithful RC4 or secure AES-GCM.</li>
+          <li><strong>Transmit</strong> the scrambled package to the receiver.</li>
+          <li><strong>Receiver reverses everything</strong> — decrypts, extracts the message, and verifies it arrived intact.</li>
+        </ol>
+      </div>
+      <div class="col-ar" dir="rtl" lang="ar">
+        <h3 class="primer-h">الجزء الأول — المسار خطوة بخطوة</h3>
+        <ol class="primer-list">
+          <li><strong>التعرّف على المُرسِل</strong> من خلال قزحيته — السمة الحيوية تحلّ محلّ اسم المستخدم.</li>
+          <li><strong>التحقّق من الرسالة</strong> — هل هي حقيقية أم مزيّفة؟ (مصنِّف إنجليزي أو عربي.)</li>
+          <li><strong>إخفاء الرسالة</strong> داخل صورة عادية بحيث لا يشكّ أحد بوجودها (إخفاء المعلومات).</li>
+          <li><strong>تشفير الصورة</strong> باستخدام السمة الحيوية كمفتاح — RC4 الأمين أو AES-GCM الآمن.</li>
+          <li><strong>إرسال</strong> الحزمة المشفّرة إلى المُستقبِل.</li>
+          <li><strong>يعكس المُستقبِل كل شيء</strong> — يفكّ التشفير، يستخرج الرسالة، ويتأكّد من وصولها سليمة.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- Part 2: the data flow -->
+  <div class="primer-card highlight">
+    <div class="bilingual">
+      <div class="col-en">
+        <h3 class="primer-h">Part 2 — How the data &amp; models get into the website</h3>
+        <p class="primer-key">The key idea: the raw datasets never come to the website. Only the <strong>trained result</strong> does.</p>
+        <ol class="primer-list">
+          <li><strong>Training happens once, on the research PC.</strong> The models read all <strong>3.9 GB</strong> of data — the MMU iris images (152 MB), 134,000 English news rows (27 MB), and the Arabic dataset — and learn the patterns. This heavy computation is done locally.</li>
+          <li><strong>The result is distilled into tiny model files</strong> (~12 MB total): <code>iris.joblib</code> (5.7 MB), <code>text_en.joblib</code> (4.2 MB), <code>text_ar.joblib</code> (1.1 MB). They hold <em>what was learned</em>, not the data itself.</li>
+          <li><strong>Those files are imported into the website exactly as they are</strong> — committed into the project and deployed to the server. When you upload one iris or type one message, the site loads these ready-made models and answers instantly. It never needs the original datasets again.</li>
+          <li><strong>Why this design:</strong> the website stays tiny (12 MB, not 3.9 GB), loads fast, runs on a free server, and the private datasets stay on the PC — never published online.</li>
+          <li><strong>To update:</strong> if the datasets improve, re-run <code>train_models.py</code> on the PC to regenerate the 12 MB of models, push them, and the site redeploys automatically with the new models.</li>
+        </ol>
+        <p class="primer-analogy">Think of a graduate who studied thousands of textbooks: the <strong>textbooks (data)</strong> stay home — only the <strong>knowledge (12 MB models)</strong> comes to work.</p>
+      </div>
+      <div class="col-ar" dir="rtl" lang="ar">
+        <h3 class="primer-h">الجزء الثاني — كيف تصل البيانات والنماذج إلى الموقع</h3>
+        <p class="primer-key">الفكرة الجوهرية: البيانات الخام لا تصل إلى الموقع أبدًا. ما يصل هو <strong>النتيجة المدرَّبة</strong> فقط.</p>
+        <ol class="primer-list">
+          <li><strong>التدريب يحدث مرة واحدة على حاسوب الباحثة.</strong> تقرأ النماذج كامل البيانات البالغة <strong>3.9 غيغابايت</strong> — صور قزحيات MMU (152 م.ب)، و134,000 صف من الأخبار الإنجليزية (27 م.ب)، والمجموعة العربية — وتتعلّم الأنماط. هذه العملية الثقيلة تُنفَّذ محليًا.</li>
+          <li><strong>تُختصر النتيجة في ملفات نماذج صغيرة جدًا</strong> (نحو 12 م.ب إجمالاً): <code>iris.joblib</code> (5.7 م.ب)، <code>text_en.joblib</code> (4.2 م.ب)، <code>text_ar.joblib</code> (1.1 م.ب). تحتوي على <em>ما تعلّمته النماذج</em>، لا على البيانات نفسها.</li>
+          <li><strong>تُستورَد هذه الملفات إلى الموقع كما هي تمامًا</strong> — تُضاف إلى المشروع وتُنشر على الخادم. وعندما ترفعين قزحية واحدة أو تكتبين رسالة، يحمّل الموقع هذه النماذج الجاهزة ويجيب فورًا — دون الحاجة إلى البيانات الأصلية مجددًا.</li>
+          <li><strong>لماذا هذا التصميم:</strong> يبقى الموقع صغيرًا (12 م.ب لا 3.9 غ.ب)، ويُحمَّل بسرعة، ويعمل على خادم مجاني، وتبقى البيانات الخاصة على الحاسوب دون نشرها.</li>
+          <li><strong>للتحديث:</strong> إذا تحسّنت البيانات، أعيدي تشغيل <code>train_models.py</code> على الحاسوب لإعادة توليد الـ12 م.ب من النماذج، ثم ارفعيها، فيُعاد نشر الموقع تلقائيًا بالنماذج الجديدة.</li>
+        </ol>
+        <p class="primer-analogy">تخيّلي خرّيجة درست آلاف الكتب: تبقى <strong>الكتب (البيانات)</strong> في البيت — ولا يذهب إلى العمل سوى <strong>المعرفة (نماذج 12 م.ب)</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- visual data-flow diagram -->
+  <div class="flow-diagram">
+    <div class="flow-node"><span class="flow-ic">🖥️</span><span class="flow-en">Research PC<br><small>3.9 GB raw data</small></span><span class="flow-ar" dir="rtl">حاسوب الباحثة<br><small>3.9 غ.ب بيانات خام</small></span></div>
+    <div class="flow-arrow"><span class="flow-en">train once</span><span class="flow-ar" dir="rtl">تدريب مرة واحدة</span>→</div>
+    <div class="flow-node"><span class="flow-ic">📦</span><span class="flow-en">Trained models<br><small>12 MB total</small></span><span class="flow-ar" dir="rtl">نماذج مدرَّبة<br><small>12 م.ب</small></span></div>
+    <div class="flow-arrow"><span class="flow-en">git push</span><span class="flow-ar" dir="rtl">رفع</span>→</div>
+    <div class="flow-node"><span class="flow-ic">🌐</span><span class="flow-en">This website<br><small>instant answers</small></span><span class="flow-ar" dir="rtl">هذا الموقع<br><small>إجابات فورية</small></span></div>
+  </div>
+</section>
 
 <!-- ============================ CHAPTER 0 : IDENTITY ================ -->
 <section class="chapter" id="ch-identity">
