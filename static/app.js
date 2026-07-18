@@ -7,6 +7,27 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () =>
     navigator.serviceWorker.register("/sw.js").catch(() => {}));
 }
+// ————————————————————————————— sidebar + page navigation
+function showPage(name) {
+  document.querySelectorAll(".page").forEach((p) => p.classList.toggle("active", p.dataset.page === name));
+  document.querySelectorAll(".nav-item[data-page]").forEach((n) => n.classList.toggle("active", n.dataset.page === name));
+  document.body.classList.remove("nav-open");
+  if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".nav-item[data-page]").forEach((n) =>
+    n.addEventListener("click", (e) => { e.preventDefault(); showPage(n.dataset.page); }));
+  const toggle = document.querySelector("#nav-toggle");
+  const scrim = document.querySelector("#scrim");
+  if (toggle) toggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
+  if (scrim) scrim.addEventListener("click", () => document.body.classList.remove("nav-open"));
+  document.querySelectorAll(".link-how").forEach((l) =>
+    l.addEventListener("click", (e) => { e.preventDefault(); showPage("how"); }));
+  const start = (location.hash || "").replace("#", "");
+  if (start && document.querySelector(`.page[data-page="${start}"]`)) showPage(start);
+});
+
 let deferredInstall = null;
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();

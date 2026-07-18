@@ -22,6 +22,32 @@
 </head>
 <body>
 
+<button class="nav-toggle" id="nav-toggle" aria-label="Menu">☰</button>
+<div class="scrim" id="scrim"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="/icon-192.png" alt="" class="sidebar-logo">
+    <div>
+      <div class="sidebar-title">Iris-Stego</div>
+      <div class="sidebar-sub">Experiment Bench</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" data-page="lab"><span class="nav-ic">🧪</span><span>The Lab<small>المختبر</small></span></a>
+    <a class="nav-item" data-page="how"><span class="nav-ic">⚙️</span><span>How It All Works<small>كيف يعمل النظام</small></span></a>
+    <a class="nav-item" data-page="gap"><span class="nav-ic">🕳️</span><span>The Research Gap<small>الفجوة البحثية</small></span></a>
+    <a class="nav-item" data-page="contribution"><span class="nav-ic">✦</span><span>The Contribution<small>الإسهام</small></span></a>
+    <a class="nav-item" data-page="datasets"><span class="nav-ic">🗄️</span><span>The Datasets<small>مجموعات البيانات</small></span></a>
+    <a class="nav-item" data-page="flowchart"><span class="nav-ic">🔀</span><span>Flowchart<small>المخطط الكامل</small></span></a>
+    <div class="nav-sep">Thesis Guide · دليل الأطروحة</div>
+    <a class="nav-item pdf" href="/thesis_guide_en.pdf" download><span class="nav-ic">📄</span><span>Guide (English)<small>PDF</small></span></a>
+    <a class="nav-item pdf" href="/thesis_guide_ar.pdf" download><span class="nav-ic">📄</span><span>الدليل (بالعربية)<small>PDF</small></span></a>
+  </nav>
+</aside>
+
+<div class="content">
+
 <header class="masthead">
   <div class="masthead-rule"></div>
   <p class="eyebrow">Doctoral Experiment Bench · Secure Covert Communication</p>
@@ -44,6 +70,7 @@
 <main>
 
 <!-- ============================ PRIMER : HOW IT WORKS =============== -->
+<div class="page" data-page="how">
 <section class="chapter" id="ch-primer">
   <div class="chapter-head">
     <span class="chapter-no">✦</span>
@@ -118,7 +145,9 @@
     <div class="flow-node"><span class="flow-ic">🌐</span><span class="flow-en">This website<br><small>instant answers</small></span><span class="flow-ar" dir="rtl">هذا الموقع<br><small>إجابات فورية</small></span></div>
   </div>
 </section>
+</div><!-- /page how -->
 
+<div class="page active" data-page="lab">
 <!-- ============================ CHAPTER 0 : IDENTITY ================ -->
 <section class="chapter" id="ch-identity">
   <div class="chapter-head">
@@ -499,6 +528,170 @@
     </table>
   </div>
 </section>
+</div><!-- /page lab -->
+
+<!-- ============================ PAGE : THE GAP ====================== -->
+<div class="page" data-page="gap">
+  <div class="chapter-head page-head">
+    <span class="chapter-no">🕳️</span>
+    <h2>The Research Gap · الفجوة البحثية</h2>
+    <p>What existing work leaves unsolved — and the opening this thesis fills. · ما الذي تتركه الأبحاث السابقة دون حلّ — والثغرة التي تسدّها هذه الأطروحة.</p>
+  </div>
+  <div class="primer-card">
+    <div class="bilingual">
+      <div class="col-en">
+        <h3 class="primer-h">Where prior work falls short</h3>
+        <ul class="primer-list">
+          <li><strong>Steganography</strong> hides data well, but assumes the message is already trustworthy and the sender already known — it verifies neither.</li>
+          <li><strong>Biometric systems</strong> identify people, yet are rarely used to <em>derive the encryption key itself</em>.</li>
+          <li><strong>Fake-news / authenticity detection</strong> is mature, but operates on its own — disconnected from any secure-transmission channel.</li>
+          <li><strong>Most covert-communication work is English-only</strong>; Arabic content-authenticity is under-served.</li>
+        </ul>
+        <p class="primer-key">The gap, in one sentence: no prior system unifies <strong>biometric-derived keying + covert steganographic transmission + pre-transmission authenticity vetting</strong>, bilingually, as a single pipeline.</p>
+      </div>
+      <div class="col-ar" dir="rtl" lang="ar">
+        <h3 class="primer-h">أين تقصُر الأبحاث السابقة</h3>
+        <ul class="primer-list">
+          <li><strong>إخفاء المعلومات</strong> يخفي البيانات جيدًا، لكنه يفترض أن الرسالة موثوقة أصلاً وأن المُرسِل معروف — دون التحقق من أيٍّ منهما.</li>
+          <li><strong>أنظمة السمات الحيوية</strong> تتعرّف على الأشخاص، لكنها نادرًا ما تُستخدم لِـ<em>اشتقاق مفتاح التشفير نفسه</em>.</li>
+          <li><strong>كشف الأخبار المزيّفة</strong> مجال ناضج، لكنه يعمل بمعزل — غير مرتبط بأي قناة إرسال آمنة.</li>
+          <li><strong>معظم أبحاث الاتصال الخفيّ بالإنجليزية فقط</strong>؛ وموثوقية المحتوى العربي غير مخدومة كفايةً.</li>
+        </ul>
+        <p class="primer-key">الفجوة في جملة واحدة: لا يوجد نظام سابق يوحّد <strong>توليد المفتاح من السمة الحيوية + الإرسال الخفيّ بالإخفاء + التحقق من الموثوقية قبل الإرسال</strong>، بلغتين، في مسار واحد.</p>
+      </div>
+    </div>
+  </div>
+</div><!-- /page gap -->
+
+<!-- ============================ PAGE : CONTRIBUTION ================= -->
+<div class="page" data-page="contribution">
+  <div class="chapter-head page-head">
+    <span class="chapter-no">✦</span>
+    <h2>The Contribution · إسهام الأطروحة</h2>
+    <p>What this thesis adds to the field — an integrated-systems contribution. · ما تضيفه هذه الأطروحة إلى المجال — إسهام تكاملي مُنظَّم.</p>
+  </div>
+  <div class="primer-card highlight">
+    <div class="bilingual">
+      <div class="col-en">
+        <h3 class="primer-h">Six concrete contributions</h3>
+        <ol class="primer-list">
+          <li><strong>Biometric-derived keying</strong> — the encryption key comes from the sender's iris, not a password.</li>
+          <li><strong>Multi-layer secrecy</strong> — hide the message, encrypt the carrier, then wrap the key.</li>
+          <li><strong>Authenticity gate</strong> — a classifier judges the message before it is hidden (novel inside a stego channel).</li>
+          <li><strong>Bilingual scope</strong> — an Arabic authenticity classifier alongside the English one.</li>
+          <li><strong>Comparative evaluation</strong> — several ML and deep-learning models measured side by side.</li>
+          <li><strong>Security modernization</strong> — an AES-256-GCM + PBKDF2 mode, while keeping faithful RC4 for comparability.</li>
+        </ol>
+        <p class="primer-key">Thesis statement: <em>an integrated framework for authenticated, biometrically-keyed covert communication — iris-based key generation, bilingual content-authenticity classification, and multi-layer steganographic encryption — with a comparative empirical evaluation.</em></p>
+        <p class="primer-analogy">This is a <strong>systems / applied</strong> contribution: its strength is the working integration of parts usually studied separately — demonstrated live by this very website.</p>
+      </div>
+      <div class="col-ar" dir="rtl" lang="ar">
+        <h3 class="primer-h">ستة إسهامات ملموسة</h3>
+        <ol class="primer-list">
+          <li><strong>توليد المفتاح من السمة الحيوية</strong> — مفتاح التشفير من قزحية المُرسِل لا من كلمة مرور.</li>
+          <li><strong>سرّية متعددة الطبقات</strong> — إخفاء الرسالة، ثم تشفير الحامل، ثم تغليف المفتاح.</li>
+          <li><strong>بوابة موثوقية</strong> — مصنِّف يحكم على الرسالة قبل إخفائها (جديد داخل قناة إخفاء).</li>
+          <li><strong>نطاق ثنائي اللغة</strong> — مصنِّف موثوقية عربي إلى جانب الإنجليزي.</li>
+          <li><strong>تقييم مقارن</strong> — عدة نماذج تعلّم آلي وعميق تُقاس جنبًا إلى جنب.</li>
+          <li><strong>تحديث أمني</strong> — وضع AES-256-GCM + PBKDF2 مع الإبقاء على RC4 الأمين للمقارنة.</li>
+        </ol>
+        <p class="primer-key">فرضية الأطروحة: <em>إطار متكامل لاتصال خفيّ موثَّق ومُفتَّح بالسمة الحيوية — توليد مفتاح من القزحية، وتصنيف موثوقية المحتوى بلغتين، وتشفير إخفائي متعدد الطبقات — مع تقييم تجريبي مقارن.</em></p>
+        <p class="primer-analogy">هذا إسهام <strong>نظامي / تطبيقي</strong>: قوّته في التكامل العملي لأجزاء تُدرَس عادةً منفصلة — ويُبرهَن عليه مباشرةً عبر هذا الموقع.</p>
+      </div>
+    </div>
+  </div>
+</div><!-- /page contribution -->
+
+<!-- ============================ PAGE : DATASETS ==================== -->
+<div class="page" data-page="datasets">
+  <div class="chapter-head page-head">
+    <span class="chapter-no">🗄️</span>
+    <h2>The Datasets · مجموعات البيانات</h2>
+    <p>The data the models learned from — and how only the trained result reaches the site. · البيانات التي تعلّمت منها النماذج — وكيف تصل النتيجة المدرَّبة فقط إلى الموقع.</p>
+  </div>
+  <div class="ds-grid">
+    <div class="ds-card">
+      <div class="ds-h">🧿 MMU Iris Database</div>
+      <div class="ds-meta mono">46 subjects · ~891 images · 152 MB</div>
+      <p class="ds-en">Eye photographs (left &amp; right) used to train the iris-recognition model.</p>
+      <p class="ds-ar" dir="rtl">صور أعين (يمنى ويسرى) لتدريب نموذج التعرّف على القزحية.</p>
+    </div>
+    <div class="ds-card">
+      <div class="ds-h">📰 English news set — <span class="mono">ds.csv</span></div>
+      <div class="ds-meta mono">134,198 rows · TRUE/FALSE · 27 MB</div>
+      <p class="ds-en">Real vs. fake news; trains the English authenticity classifier (~92%).</p>
+      <p class="ds-ar" dir="rtl">أخبار حقيقية ومزيّفة؛ تدرّب المصنِّف الإنجليزي (نحو 92%).</p>
+    </div>
+    <div class="ds-card">
+      <div class="ds-h">📰 Arabic news set</div>
+      <div class="ds-meta mono">4,837 rows · balanced</div>
+      <p class="ds-en">Arabic real vs. fake; trains the Arabic classifier (~88%).</p>
+      <p class="ds-ar" dir="rtl">أخبار عربية حقيقية ومزيّفة؛ تدرّب المصنِّف العربي (نحو 88%).</p>
+    </div>
+    <div class="ds-card">
+      <div class="ds-h">🔑 Iris features — <span class="mono">feat.csv</span></div>
+      <div class="ds-meta mono">441 vectors</div>
+      <p class="ds-en">Numeric iris feature vectors used directly as encryption keys.</p>
+      <p class="ds-ar" dir="rtl">متجهات سمات القزحية الرقمية تُستخدم مباشرةً كمفاتيح تشفير.</p>
+    </div>
+  </div>
+  <div class="primer-card highlight" style="margin-top:22px">
+    <div class="bilingual">
+      <div class="col-en">
+        <h3 class="primer-h">3.9 GB in → 12 MB out</h3>
+        <p>All the datasets total <strong>3.9 GB</strong> and stay on the research PC. Training runs there once and distills the learning into <strong>~12 MB of model files</strong>, which are the only thing imported into the website. See <a href="#" class="link-how">How It All Works</a> for the full data-flow.</p>
+      </div>
+      <div class="col-ar" dir="rtl" lang="ar">
+        <h3 class="primer-h">‏3.9 غيغابايت داخلاً ← 12 ميغابايت خارجاً</h3>
+        <p>مجموع البيانات <strong>3.9 غيغابايت</strong> وتبقى على حاسوب الباحثة. يجري التدريب هناك مرة واحدة ويُختصر التعلّم في <strong>نحو 12 ميغابايت من ملفات النماذج</strong>، وهي وحدها ما يُستورَد إلى الموقع. انظري <a href="#" class="link-how">كيف يعمل النظام</a> لكامل تدفّق البيانات.</p>
+      </div>
+    </div>
+  </div>
+</div><!-- /page datasets -->
+
+<!-- ============================ PAGE : FLOWCHART =================== -->
+<div class="page" data-page="flowchart">
+  <div class="chapter-head page-head">
+    <span class="chapter-no">🔀</span>
+    <h2>Complete Flowchart · المخطط الكامل</h2>
+    <p>The entire system at a glance, from training to transmission to recovery. · النظام كاملاً في لمحة، من التدريب إلى الإرسال إلى الاسترجاع.</p>
+  </div>
+
+  <div class="fc-lane-label">① Offline training (research PC) · التدريب دون اتصال (حاسوب الباحثة)</div>
+  <div class="fc-row">
+    <div class="fc-box data">Datasets 3.9 GB<small>المجموعات</small></div>
+    <div class="fc-a">→</div>
+    <div class="fc-box">Train models<small>تدريب النماذج</small></div>
+    <div class="fc-a">→</div>
+    <div class="fc-box model">Models 12 MB<small>النماذج المدرَّبة</small></div>
+    <div class="fc-a">→</div>
+    <div class="fc-box net">Imported to website<small>تُستورَد للموقع</small></div>
+  </div>
+
+  <div class="fc-lane-label">② Transmitter · المُرسِل</div>
+  <div class="fc-chain">
+    <div class="fc-box">🧿 Iris → identify sender<small>التعرّف على المُرسِل</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box">📝 Message → vet real/fake<small>التحقق من الرسالة</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box">🖼️ Cover image + message → LSB hide<small>إخفاء الرسالة</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box accent">🔒 Encrypt with biometric key (RC4 / AES-GCM) + AES-wrap key<small>التشفير وتغليف المفتاح</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box net">📡 Transmit package<small>إرسال الحزمة</small></div>
+  </div>
+
+  <div class="fc-lane-label">③ Receiver · المُستقبِل</div>
+  <div class="fc-chain">
+    <div class="fc-box net">📡 Receive package<small>استقبال الحزمة</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box accent">🔓 Unwrap key → decrypt image<small>فكّ المفتاح والتشفير</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box">🔍 LSB extract hidden message<small>استخراج الرسالة</small></div>
+    <div class="fc-d">↓</div>
+    <div class="fc-box ok">✓ Verify round-trip integrity<small>التحقق من السلامة</small></div>
+  </div>
+</div><!-- /page flowchart -->
 
 </main>
 
@@ -507,6 +700,8 @@
   <p>Iris-Stego Laboratory · faithful web port of the NadaGUI desktop prototype
      (Java Swing / OpenCV 2.4) · LSB § RC4 § AES-ECB kept method-identical for comparability.</p>
 </footer>
+
+</div><!-- /content -->
 
 <div id="toast" class="toast" hidden></div>
 <script src="app.js"></script>
