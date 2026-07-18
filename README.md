@@ -4,6 +4,13 @@ A faithful web port of the **NadaGUI** desktop prototype (Java Swing + OpenCV 2.
 rebuilt as a browser-based experiment lab for PhD research into biometric-keyed
 covert image communication.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ghadeerghazi-debug/iris-stego-lab)
+
+**Live deploy:** click the button above (or
+[render.com/deploy?repo=…](https://render.com/deploy?repo=https://github.com/ghadeerghazi-debug/iris-stego-lab)),
+sign in to Render, authorize GitHub, and Render reads `render.yaml` to provision
+the Docker service automatically. First build takes ~3–5 min.
+
 ## What it does
 
 A complete transmitter → receiver pipeline, with per-step scientific instrumentation:
