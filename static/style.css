@@ -206,6 +206,39 @@ footer p { font-size: 13px; font-style: italic; color: var(--ink-faint); margin-
 }
 .toast.error { background: var(--crimson-deep); }
 
+/* ————— explanatory notes (for Nada) ————— */
+.explain {
+  margin: 0 0 20px; border: 1px solid var(--rule); border-left: 4px solid var(--teal);
+  border-radius: 3px; background: linear-gradient(180deg, #fbfaf4, #f4efe2);
+}
+.explain > summary {
+  cursor: pointer; list-style: none; padding: 12px 18px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--teal); display: flex; align-items: center; gap: 10px; user-select: none;
+}
+.explain > summary::-webkit-details-marker { display: none; }
+.explain > summary::before {
+  content: "＋"; font-size: 15px; color: var(--teal); transition: transform .2s ease;
+  display: inline-block; width: 14px;
+}
+.explain[open] > summary::before { content: "－"; }
+.explain > summary::after {
+  content: "Explanatory note — for Nada"; margin-left: auto; font-size: 10px;
+  color: var(--ink-faint); letter-spacing: .06em; text-transform: none; font-style: italic;
+}
+.explain-body {
+  padding: 4px 20px 18px; font-family: var(--body); font-size: 15.5px;
+  color: var(--ink-soft); text-transform: none; letter-spacing: normal; line-height: 1.6;
+}
+.explain-body p { margin-bottom: 10px; }
+.explain-body strong { color: var(--ink); font-weight: 600; }
+.explain-body .ex-q {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--crimson); display: block; margin: 12px 0 3px;
+}
+.explain-body .ex-q:first-child { margin-top: 0; }
+.explain-body code { font-family: var(--mono); font-size: 13px; color: var(--teal); }
+
 /* ————— new: iris verdict, vetting, mode toggle, chips ————— */
 .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
 .btn-ghost:hover:not(:disabled) { background: var(--ink); color: var(--paper); }

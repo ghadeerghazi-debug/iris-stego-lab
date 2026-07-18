@@ -50,6 +50,26 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>You upload a picture of someone's <strong>iris</strong> (the coloured ring of the eye), and the
+             computer guesses <strong>which person</strong> it belongs to — like face recognition, but for eyes.</p>
+          <span class="ex-q">Why it matters for the research</span>
+          <p>In this system the sender is identified by their own body — their iris — instead of a username.
+             That identity is what ties the person to their secret encryption key. This is the
+             <strong>"who is sending?"</strong> part of the thesis.</p>
+          <span class="ex-q">How it learned to do this</span>
+          <p>A model was trained once on the <strong>MMU iris database</strong> (hundreds of eye photos from 45 people).
+             It uses the classic <strong>Fisherfaces</strong> method — the same idea as the original FisherFace
+             recognizer in the desktop program.</p>
+          <span class="ex-q">How to read the result</span>
+          <p>It shows the <strong>predicted person</strong>, a <strong>confidence %</strong>, and its top-3 guesses.
+             It is right about <strong>62%</strong> of the time (out of 45 people — random guessing would be ~2%),
+             so it sometimes misses; the confidence number tells you how sure it is.</p>
+        </div>
+      </details>
       <div class="controls">
         <label class="filedrop" id="irisdrop">
           <input type="file" id="iris-input" accept="image/*">
@@ -85,6 +105,20 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>You choose an ordinary image. This is the <strong>"cover"</strong> — the innocent-looking picture
+             that will secretly carry the hidden message inside it.</p>
+          <span class="ex-q">Why it matters for the research</span>
+          <p>Steganography is about hiding a message <strong>so well that no one even suspects one exists</strong>.
+             The cover image looks completely normal to anyone who sees it — the secret is buried in the pixels.</p>
+          <span class="ex-q">How to read the result</span>
+          <p>It shows the image size and its <strong>capacity</strong> — the maximum number of characters that can
+             be hidden inside this particular image. Bigger images can hold longer messages.</p>
+        </div>
+      </details>
       <div class="controls">
         <label class="filedrop" id="filedrop">
           <input type="file" id="cover-input" accept="image/*">
@@ -110,6 +144,21 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>It converts the image to <strong>black-and-white (grayscale)</strong> and then <strong>evens out its
+             brightness</strong> (histogram equalization) so dark and bright areas are more balanced.</p>
+          <span class="ex-q">Why it matters for the research</span>
+          <p>This is exactly what the original C++ program (<code>rtsig.cpp</code>) did before recognising an iris.
+             Standardising every image the same way makes the later analysis fair and repeatable.</p>
+          <span class="ex-q">How to read the result</span>
+          <p>The two <strong>histograms</strong> are bar charts showing how many pixels are dark vs. bright.
+             After equalization the bars spread out more evenly. <strong>Entropy</strong> measures how much
+             visual "information" the image holds (higher = more detailed).</p>
+        </div>
+      </details>
       <div class="controls">
         <button class="btn" id="btn-pre">Run preprocessing</button>
       </div>
@@ -135,6 +184,21 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>It finds the <strong>most distinctive points</strong> in the image — corners, edges, textured spots —
+             and marks them with little circles. These are called <strong>keypoints</strong>.</p>
+          <span class="ex-q">Why it matters for the research</span>
+          <p>The original program used a method called <strong>SURF</strong> to describe an image by its key points.
+             (SURF is patented and unavailable here, so the lab uses <strong>SIFT</strong> — its close, well-known cousin —
+             and tells you which one ran.)</p>
+          <span class="ex-q">How to read the result</span>
+          <p>You'll see the image covered in circles and a <strong>count</strong> of how many keypoints were found.
+             More keypoints means the image is richer in unique detail.</p>
+        </div>
+      </details>
       <div class="controls">
         <button class="btn" id="btn-feat">Extract features</button>
       </div>
@@ -158,6 +222,23 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">First — vet the message (optional)</span>
+          <p>Before hiding, you can ask the computer whether the message looks <strong>authentic or fake</strong>.
+             A model trained on real vs. fake news (in <strong>English</strong> or <strong>Arabic</strong>) gives its verdict.
+             This is the <strong>"is the message trustworthy?"</strong> part of the thesis.</p>
+          <span class="ex-q">Then — hide the message</span>
+          <p>Your text is turned into <strong>0s and 1s</strong> and tucked into the <strong>least important bit</strong>
+             of each pixel's colour value. Changing that last bit shifts a colour so slightly the human eye
+             cannot see any difference — but the message is now inside the image.</p>
+          <span class="ex-q">How to read the result</span>
+          <p><strong>PSNR</strong> and <strong>MSE</strong> measure how different the new image is from the original.
+             A <strong>high PSNR</strong> (70+ dB) means the change is essentially invisible — which is exactly
+             what good steganography wants. It also shows how many pixels were touched.</p>
+        </div>
+      </details>
       <div class="controls stack">
         <textarea id="message" rows="3" placeholder="Secret message to embed…"></textarea>
         <div class="btn-row vet-row">
@@ -191,6 +272,23 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>It <strong>scrambles the whole image</strong> so it becomes meaningless noise to anyone who intercepts it.
+             The scrambling key comes from an <strong>iris feature vector</strong> — numbers derived from a person's eye —
+             so the biometric <em>is</em> the key. That key is then locked inside another layer (AES) for transport.</p>
+          <span class="ex-q">The two modes (why there's a choice)</span>
+          <p><strong>RC4 · faithful</strong> reproduces the original thesis exactly, so results stay comparable —
+             but RC4 is old and no longer secure. <strong>AES-256-GCM · secure</strong> is the modern upgrade:
+             it also <strong>detects tampering</strong> and derives a strong key properly (PBKDF2). Use RC4 to match
+             the old numbers; use AES-GCM to show the improved, defensible version.</p>
+          <span class="ex-q">How to read the result</span>
+          <p>The scrambled image is shown as <strong>random noise</strong>, and its histogram should look <strong>flat</strong>.
+             <strong>Entropy near 8.0</strong> means the output is almost perfectly random — the sign of strong encryption.</p>
+        </div>
+      </details>
       <div class="controls stack">
         <label class="field-label">Biometric key vector (feat.csv)</label>
         <select id="key-select" class="mono"></select>
@@ -246,6 +344,22 @@
       </div>
     </div>
     <div class="step-body">
+      <details class="explain">
+        <summary>What's happening in this step?</summary>
+        <div class="explain-body">
+          <span class="ex-q">What it does</span>
+          <p>This is the <strong>receiver's side</strong>. It takes the scrambled package that was sent, <strong>reverses
+             every step</strong> — unlocks the key, un-scrambles the image, and pulls the hidden message back out.</p>
+          <span class="ex-q">Why it matters for the research</span>
+          <p>It proves the <strong>whole journey works end-to-end</strong>: the secret that was hidden and encrypted on
+             one side comes back out perfectly on the other. In the real thesis this happened between two computers
+             over a network; here it's simulated in one place.</p>
+          <span class="ex-q">How to read the result</span>
+          <p>It shows the recovered message and a <strong>round-trip verdict</strong>: <strong>PASS</strong> means the
+             message came back <em>identical</em> to what was sent (success!). With the secure mode it also confirms the
+             package was <strong>not tampered with</strong>.</p>
+        </div>
+      </details>
       <div class="controls stack">
         <label class="field-label">AES shared secret (receiver side)</label>
         <input type="text" id="rx-secret" class="mono" value="123">
@@ -274,6 +388,18 @@
     <p>Every run with its full metric record — exportable for the dissertation.</p>
     <a class="btn btn-small" href="/api/runs.csv" download>Export CSV ↓</a>
   </div>
+  <details class="explain">
+    <summary>What's happening in this step?</summary>
+    <div class="explain-body">
+      <span class="ex-q">What it does</span>
+      <p>Every experiment you run is <strong>recorded here as one row</strong>, with all its measured numbers —
+         image quality (PSNR/MSE), randomness (entropy), speeds, and whether the round-trip passed.</p>
+      <span class="ex-q">Why it matters for the research</span>
+      <p>This is your <strong>results table for the dissertation</strong>. Instead of writing numbers down by hand,
+         run several experiments and the evidence collects itself. The <strong>Export CSV</strong> button downloads
+         everything into a spreadsheet you can put straight into the thesis or into charts.</p>
+    </div>
+  </details>
   <div class="log-wrap">
     <table class="log mono" id="runs-table">
       <thead><tr>
