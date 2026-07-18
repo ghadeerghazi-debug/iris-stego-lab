@@ -31,12 +31,48 @@
 
 <main>
 
+<!-- ============================ CHAPTER 0 : IDENTITY ================ -->
+<section class="chapter" id="ch-identity">
+  <div class="chapter-head">
+    <span class="chapter-no">§0</span>
+    <h2>Sender Identification</h2>
+    <p>Iris biometric recognition — establishes <em>who</em> is transmitting.</p>
+  </div>
+
+  <article class="step" id="step-iris">
+    <div class="step-head">
+      <span class="step-no">0</span>
+      <div>
+        <h3>Iris Recognition</h3>
+        <p>Fisherfaces model (PCA → LDA) over the MMU Iris Database — the
+           scikit-learn analogue of the original FisherFace recognizer
+           (<code>modeliris.yml</code> / <code>rtsig.cpp</code>).</p>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="controls">
+        <label class="filedrop" id="irisdrop">
+          <input type="file" id="iris-input" accept="image/*">
+          <span class="filedrop-label">Drop or choose an iris image (MMU .bmp)</span>
+        </label>
+      </div>
+      <div class="results" id="iris-results" hidden>
+        <div class="figures">
+          <figure><img id="fig-iris" alt="iris"><figcaption>Fig. 0 — Query iris.</figcaption></figure>
+        </div>
+        <div class="verdict-card" id="iris-verdict"></div>
+        <table class="metrics mono" id="iris-metrics"></table>
+      </div>
+    </div>
+  </article>
+</section>
+
 <!-- ============================ CHAPTER 1 : TRANSMITTER ============== -->
 <section class="chapter" id="ch-sender">
   <div class="chapter-head">
     <span class="chapter-no">§1</span>
     <h2>Transmitter Protocol</h2>
-    <p>Cover acquisition → preprocessing → feature audit → embedding → encryption → dispatch.</p>
+    <p>Cover acquisition → preprocessing → feature audit → vetting → embedding → encryption → dispatch.</p>
   </div>
 
   <!-- Step I -->
@@ -124,6 +160,14 @@
     <div class="step-body">
       <div class="controls stack">
         <textarea id="message" rows="3" placeholder="Secret message to embed…"></textarea>
+        <div class="btn-row vet-row">
+          <button class="btn btn-ghost" id="btn-vet">Vet message authenticity</button>
+          <select id="vet-lang" class="mono">
+            <option value="en">English</option>
+            <option value="ar">Arabic</option>
+          </select>
+          <span class="vet-badge" id="vet-badge" hidden></span>
+        </div>
         <button class="btn" id="btn-hide">Embed message</button>
       </div>
       <div class="results" id="hide-results" hidden>
@@ -141,18 +185,32 @@
       <span class="step-no">V</span>
       <div>
         <h3>Encryption &amp; Dispatch</h3>
-        <p>The stego image is RC4-encrypted under a biometric feature-vector key;
-           the key itself is AES-wrapped (SHA-1 → AES/ECB) before transmission.</p>
+        <p>The stego image is encrypted under a biometric feature-vector key;
+           the key itself is AES-wrapped before transmission. Choose the faithful
+           RC4 port or the modernized authenticated mode.</p>
       </div>
     </div>
     <div class="step-body">
       <div class="controls stack">
         <label class="field-label">Biometric key vector (feat.csv)</label>
         <select id="key-select" class="mono"></select>
-        <label class="field-label">AES shared secret</label>
+        <label class="field-label">Cipher mode</label>
+        <div class="mode-toggle" id="mode-toggle">
+          <label class="mode-opt selected">
+            <input type="radio" name="mode" value="rc4" checked>
+            <span class="mode-title">RC4 · faithful</span>
+            <span class="mode-sub">exact desktop port — comparable, not secure</span>
+          </label>
+          <label class="mode-opt">
+            <input type="radio" name="mode" value="aesgcm">
+            <span class="mode-title">AES-256-GCM · secure</span>
+            <span class="mode-sub">PBKDF2 key derivation · authenticated · tamper-proof</span>
+          </label>
+        </div>
+        <label class="field-label">AES key-wrap secret</label>
         <input type="text" id="aes-secret" class="mono" value="123">
         <div class="btn-row">
-          <button class="btn" id="btn-enc">Encrypt (RC4 + AES wrap)</button>
+          <button class="btn" id="btn-enc">Encrypt &amp; wrap key</button>
           <button class="btn btn-accent" id="btn-send" disabled>Dispatch to receiver ⇥</button>
         </div>
       </div>
@@ -176,7 +234,7 @@
   <div class="chapter-head">
     <span class="chapter-no">§2</span>
     <h2>Receiver Protocol</h2>
-    <p>Unwrap key → RC4 decrypt → LSB extraction → integrity verdict.</p>
+    <p>Unwrap key → decrypt (RC4 or authenticated AES-GCM) → LSB extraction → integrity verdict.</p>
   </div>
 
   <article class="step">

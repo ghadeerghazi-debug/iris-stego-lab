@@ -26,8 +26,13 @@ import time
 import cv2
 import numpy as np
 from Crypto.Cipher import AES
+from Crypto.Hash import SHA256
+from Crypto.Protocol.KDF import PBKDF2
+from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 from PIL import Image
+
+PBKDF2_ITERATIONS = 200_000
 
 MAX_INT_LEN = 4   # bytes used for the length header (Java MAX_INT_LEN)
 DATA_SIZE = 8     # image bytes consumed per hidden byte (Java DATA_SIZE)
@@ -218,3 +223,36 @@ def aes_decrypt_text(b64_ciphertext: str, secret: str) -> str:
     cipher = AES.new(_aes_key(secret), AES.MODE_ECB)
     pt = unpad(cipher.decrypt(base64.b64decode(b64_ciphertext)), 16)
     return pt.decode("utf-8")
+
+
+# --------------------------------------------------------------------------
+# SECURE MODE — authenticated AES-256-GCM with PBKDF2 key derivation
+#
+# This is the modernised alternative to the faithful RC4 path. RC4 is a broken
+# stream cipher and the original AES layer used ECB with a hard-coded secret;
+# neither is safe for real confidentiality. AES-GCM gives confidentiality +
+# integrity (tamper detection), and PBKDF2-HMAC-SHA256 turns the biometric key
+# text into a proper 256-bit key with a random salt. Package layout:
+#
+#     [ salt:16 | nonce:16 | tag:16 | ciphertext ]
+# --------------------------------------------------------------------------
+
+def pbkdf2_key(key_text: str, salt: bytes) -> bytes:
+    return PBKDF2(key_text, salt, dkLen=32,
+                  count=PBKDF2_ITERATIONS, hmac_hash_module=SHA256)
+
+
+def aesgcm_encrypt(key_text: str, data: bytes) -> bytes:
+    salt = get_random_bytes(16)
+    nonce = get_random_bytes(16)
+    key = pbkdf2_key(key_text, salt)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    ciphertext, tag = cipher.encrypt_and_digest(data)
+    return salt + nonce + tag + ciphertext
+
+
+def aesgcm_decrypt(key_text: str, blob: bytes) -> bytes:
+    salt, nonce, tag, ciphertext = blob[:16], blob[16:32], blob[32:48], blob[48:]
+    key = pbkdf2_key(key_text, salt)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+    return cipher.decrypt_and_verify(ciphertext, tag)  # raises on tamper

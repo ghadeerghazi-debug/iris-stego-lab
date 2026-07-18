@@ -139,25 +139,35 @@ $("#btn-hide").addEventListener("click", async () => {
   } catch (e) { toast(e.message, true); }
 });
 
+// mode toggle visual state
+document.querySelectorAll('#mode-toggle input[name="mode"]').forEach((r) =>
+  r.addEventListener("change", () => {
+    document.querySelectorAll("#mode-toggle .mode-opt").forEach((o) =>
+      o.classList.toggle("selected", o.querySelector("input").checked));
+  }));
+
 // ————————————————————————————— Step V: encrypt + send
 $("#btn-enc").addEventListener("click", async () => {
+  const mode = document.querySelector('#mode-toggle input[name="mode"]:checked').value;
   const fd = new FormData();
   fd.append("key_index", $("#key-select").value);
   fd.append("aes_secret", $("#aes-secret").value || "123");
+  fd.append("mode", mode);
   try {
     const r = await api(`/api/runs/${state.runId}/encrypt`, { method: "POST", body: fd });
     $("#fig-cipher").src = png(r.cipher_noise_png);
-    drawHist($("#hist-cipher"), r.hist_cipher, "#1d5f58");
+    drawHist($("#hist-cipher"), r.hist_cipher, r.authenticated ? "#1d5f58" : "#a32330");
     $("#wrapped-key").textContent = r.wrapped_key;
     metricRows($("#enc-metrics"), [
-      ["RC4 key (hex)", r.rc4_key_hex.slice(0, 32) + "…"],
+      ["cipher mode", r.mode.toUpperCase() + (r.authenticated ? " · authenticated ✓" : " · unauthenticated")],
+      ["key derivation", r.key_repr],
       ["ciphertext size", r.cipher_size.toLocaleString() + " B"],
       ["entropy plain → cipher", `${fmt(r.entropy_plain, 4)} → ${fmt(r.entropy_cipher, 4)}`],
-      ["RC4 encrypt time", fmt(r.rc4_encrypt_ms, 2) + " ms"],
+      ["encrypt time", fmt(r.rc4_encrypt_ms, 2) + " ms"],
     ]);
     $("#enc-results").hidden = false;
     $("#btn-send").disabled = false;
-    toast("Encrypted · cipher entropy " + fmt(r.entropy_cipher, 3));
+    toast(`Encrypted (${r.mode.toUpperCase()}) · entropy ${fmt(r.entropy_cipher, 3)}`);
   } catch (e) { toast(e.message, true); }
 });
 
@@ -199,8 +209,9 @@ async function receive(runId) {
                                    : "✗ MISMATCH — recovered payload differs from source";
     v.className = "verdict " + (r.roundtrip_ok ? "ok" : "bad");
     metricRows($("#rx-metrics"), [
+      ["cipher mode", r.mode.toUpperCase() + (r.authenticated ? " · authenticated ✓" : "")],
       ["message length", r.message_length + " B"],
-      ["RC4 decrypt time", fmt(r.rc4_decrypt_ms, 2) + " ms"],
+      ["decrypt time", fmt(r.rc4_decrypt_ms, 2) + " ms"],
       ["LSB reveal time", fmt(r.reveal_ms, 2) + " ms"],
       ["round-trip", r.roundtrip_ok ? "PASS" : "FAIL"],
     ]);
@@ -228,5 +239,62 @@ async function refreshLog() {
     </tr>`;
   }).join("");
 }
+
+// ————————————————————————————— Step 0: iris recognition
+$("#iris-input").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  $("#fig-iris").src = URL.createObjectURL(file);
+  const fd = new FormData(); fd.append("iris", file);
+  try {
+    const r = await api("/api/identify", { method: "POST", body: fd });
+    const conf = Math.round(r.confidence * 100);
+    $("#iris-verdict").innerHTML =
+      `<span class="vc-label">Identified sender</span>
+       <span class="vc-big">Subject #${r.subject}</span>
+       <span class="vc-conf">${conf}% confidence · 1-of-${r.n_subjects}</span>`;
+    metricRows($("#iris-metrics"),
+      [["method", "Fisherfaces (PCA→LDA→SVM)"]].concat(
+        r.top3.map((t, i) => [`rank ${i + 1}`, `subject #${t.subject} · ${(t.confidence * 100).toFixed(1)}%`])));
+    $("#iris-results").hidden = false;
+    toast(`Iris → subject #${r.subject} (${conf}%)`);
+  } catch (err) { toast(err.message, true); }
+});
+const idrop = $("#irisdrop");
+["dragover", "dragenter"].forEach((ev) => idrop.addEventListener(ev, (e) => { e.preventDefault(); idrop.classList.add("drag"); }));
+["dragleave", "drop"].forEach((ev) => idrop.addEventListener(ev, () => idrop.classList.remove("drag")));
+idrop.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files[0]) { $("#iris-input").files = e.dataTransfer.files; $("#iris-input").dispatchEvent(new Event("change")); }
+});
+
+// ————————————————————————————— Step IV-a: message vetting
+$("#btn-vet").addEventListener("click", async () => {
+  const message = $("#message").value;
+  if (!message.trim()) return toast("Enter a message first", true);
+  const fd = new FormData();
+  fd.append("message", message); fd.append("lang", $("#vet-lang").value);
+  try {
+    const r = await api("/api/classify", { method: "POST", body: fd });
+    const badge = $("#vet-badge");
+    const fake = r.verdict === "fake";
+    badge.textContent = `${fake ? "⚠ FAKE" : "✓ AUTHENTIC"} · ${Math.round(r.confidence * 100)}% (${r.language})`;
+    badge.className = "vet-badge " + (fake ? "bad" : "ok");
+    badge.hidden = false;
+    toast(`Message vetted: ${r.verdict} (${Math.round(r.confidence * 100)}%)`);
+  } catch (e) { toast(e.message, true); }
+});
+
+// ————————————————————————————— model accuracy footnotes
+async function loadModelMeta() {
+  try {
+    const m = await api("/api/models");
+    if (m.iris) $("#step-iris .step-head p").insertAdjacentHTML("beforeend",
+      ` <span class="acc-chip">test acc ${(m.iris.test_accuracy * 100).toFixed(1)}% · ${m.iris.subjects} subjects</span>`);
+    if (m.text_en) $("#step-hide .step-head p").insertAdjacentHTML("beforeend",
+      ` <span class="acc-chip">EN ${(m.text_en.test_accuracy * 100).toFixed(1)}% · AR ${(m.text_ar.test_accuracy * 100).toFixed(1)}%</span>`);
+  } catch {}
+}
+loadModelMeta();
 
 init();

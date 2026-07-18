@@ -19,6 +19,7 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
+import models as ml
 import pipeline as pl
 
 BASE = Path(__file__).parent
@@ -130,7 +131,7 @@ def runs_csv():
     runs = _load(RUNS_FILE, [])
     cols = ["id", "created", "cover_name", "width", "height", "capacity_bytes",
             "key_index", "payload_bytes", "psnr_db", "mse", "bits_flipped",
-            "entropy_cover", "entropy_stego", "entropy_cipher",
+            "entropy_cover", "entropy_stego", "entropy_cipher", "crypto_mode",
             "embed_ms", "rc4_encrypt_ms", "rc4_decrypt_ms", "reveal_ms",
             "feature_detector", "feature_count", "roundtrip_ok", "status"]
     buf = io.StringIO()
@@ -209,8 +210,15 @@ def step_hide(run_id: str, message: str = Form(...)):
 
 @app.post("/api/runs/{run_id}/encrypt")
 def step_encrypt(run_id: str, key_index: int = Form(...),
-                 aes_secret: str = Form("123")):
-    """RC4-encrypt the stego image with the biometric key; AES-wrap the key."""
+                 aes_secret: str = Form("123"), mode: str = Form("rc4")):
+    """
+    Encrypt the stego image with the biometric key and AES-wrap that key.
+
+    mode = "rc4"     -> faithful port (RC4 stream cipher, as in the desktop app)
+    mode = "aesgcm"  -> secure mode (AES-256-GCM + PBKDF2, authenticated)
+    """
+    if mode not in ("rc4", "aesgcm"):
+        raise HTTPException(400, "mode must be 'rc4' or 'aesgcm'")
     d = _run_dir(run_id)
     stego_path = d / "stego.png"
     if not stego_path.exists():
@@ -221,24 +229,31 @@ def step_encrypt(run_id: str, key_index: int = Form(...),
     key_text = keys[key_index]["value"]
 
     plain = stego_path.read_bytes()
-    rc4_key = pl.rc4_key_from_text(key_text)
     t0 = time.perf_counter()
-    cipher_bytes = pl.rc4_crypt(rc4_key, plain)
+    if mode == "rc4":
+        rc4_key = pl.rc4_key_from_text(key_text)
+        cipher_bytes = pl.rc4_crypt(rc4_key, plain)
+        key_repr = rc4_key.hex()[:32] + "…"
+    else:
+        cipher_bytes = pl.aesgcm_encrypt(key_text, plain)
+        key_repr = f"PBKDF2-HMAC-SHA256 · {pl.PBKDF2_ITERATIONS:,} iters · 256-bit"
     enc_ms = (time.perf_counter() - t0) * 1000
     (d / "encrc4.bin").write_bytes(cipher_bytes)
 
     wrapped_key = pl.aes_encrypt_text(key_text, aes_secret)
     (d / "package.json").write_text(json.dumps({
         "wrapped_key": wrapped_key, "aes_secret_hint": len(aes_secret),
-        "key_index": key_index,
+        "key_index": key_index, "mode": mode,
     }))
 
     entropy_cipher = pl.shannon_entropy(cipher_bytes)
     _update_run(run_id, status="encrypted", key_index=key_index,
-                rc4_encrypt_ms=round(enc_ms, 3),
+                crypto_mode=mode, rc4_encrypt_ms=round(enc_ms, 3),
                 entropy_cipher=round(entropy_cipher, 4))
     return {
-        "rc4_key_hex": rc4_key.hex(),
+        "mode": mode,
+        "authenticated": mode == "aesgcm",
+        "key_repr": key_repr,
         "cipher_size": len(cipher_bytes),
         "rc4_encrypt_ms": enc_ms,
         "entropy_plain": pl.shannon_entropy(plain),
@@ -285,10 +300,16 @@ def step_receive(run_id: str, aes_secret: str = Form("123")):
     except Exception:
         raise HTTPException(400, "AES unwrap failed — wrong shared secret")
 
+    mode = package.get("mode", "rc4")
     cipher_bytes = (d / "encrc4.bin").read_bytes()
-    rc4_key = pl.rc4_key_from_text(key_text)
     t0 = time.perf_counter()
-    plain = pl.rc4_crypt(rc4_key, cipher_bytes)
+    if mode == "rc4":
+        plain = pl.rc4_crypt(pl.rc4_key_from_text(key_text), cipher_bytes)
+    else:
+        try:
+            plain = pl.aesgcm_decrypt(key_text, cipher_bytes)
+        except (ValueError, KeyError):
+            raise HTTPException(400, "AES-GCM authentication failed — key wrong or ciphertext tampered")
     dec_ms = (time.perf_counter() - t0) * 1000
 
     try:
@@ -310,6 +331,8 @@ def step_receive(run_id: str, aes_secret: str = Form("123")):
                 reveal_ms=round(reveal["reveal_ms"], 3),
                 roundtrip_ok=ok)
     return {
+        "mode": mode,
+        "authenticated": mode == "aesgcm",
         "decrypted_png": base64.b64encode(plain).decode("ascii"),
         "message": reveal["message"],
         "message_length": reveal["length"],
@@ -317,6 +340,32 @@ def step_receive(run_id: str, aes_secret: str = Form("123")):
         "reveal_ms": reveal["reveal_ms"],
         "roundtrip_ok": ok,
     }
+
+
+# ---------------------------------------------------------------- ML models
+
+@app.get("/api/models")
+def models_meta():
+    """Accuracies + metadata for the bundled recognition/vetting models."""
+    return ml.meta()
+
+
+@app.post("/api/identify")
+def identify_sender(iris: UploadFile = File(...)):
+    """Iris recognition — Fisherfaces on the MMU database (rtsig.cpp analogue)."""
+    try:
+        return ml.identify_iris(iris.file.read())
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/classify")
+def classify_message(message: str = Form(...), lang: str = Form("en")):
+    """Fake-message vetting — TF-IDF + Naive Bayes (dl.py / dlarab.py analogue)."""
+    try:
+        return ml.vet_message(message, lang)
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(400, str(e))
 
 
 # ---------------------------------------------------------------- static

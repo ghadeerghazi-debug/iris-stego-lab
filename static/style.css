@@ -206,7 +206,47 @@ footer p { font-size: 13px; font-style: italic; color: var(--ink-faint); margin-
 }
 .toast.error { background: var(--crimson-deep); }
 
-@media (max-width: 640px) {
+/* ————— new: iris verdict, vetting, mode toggle, chips ————— */
+.btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.btn-ghost:hover:not(:disabled) { background: var(--ink); color: var(--paper); }
+
+.acc-chip {
+  display: inline-block; font-family: var(--mono); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; background: var(--teal); color: var(--paper);
+  padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle;
+}
+
+.verdict-card {
+  display: flex; flex-direction: column; gap: 4px; padding: 18px 22px; margin-bottom: 16px;
+  background: linear-gradient(135deg, #fffdf7, var(--paper-deep));
+  border: 1px solid var(--rule); border-left: 4px solid var(--teal); border-radius: 3px;
+}
+.vc-label { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-faint); }
+.vc-big { font-family: var(--serif); font-size: 30px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+.vc-conf { font-family: var(--mono); font-size: 12px; color: var(--teal); }
+
+.vet-row { align-items: center; gap: 10px; }
+.vet-row select { width: auto; padding: 8px 10px; }
+.vet-badge {
+  font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .06em;
+  padding: 6px 12px; border-radius: 3px;
+}
+.vet-badge.ok  { background: #e3f0ec; color: var(--teal); border: 1px solid var(--teal); }
+.vet-badge.bad { background: #f7e6e3; color: var(--crimson); border: 1px solid var(--crimson); }
+
+.mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mode-opt {
+  display: flex; flex-direction: column; gap: 3px; cursor: pointer; position: relative;
+  border: 1px solid var(--rule); border-radius: 3px; padding: 12px 14px 12px 34px; background: #fffdf7;
+  transition: border-color .15s ease, background .15s ease;
+}
+.mode-opt input { position: absolute; left: 12px; top: 14px; accent-color: var(--crimson); }
+.mode-opt.selected { border-color: var(--crimson); background: #fdf6ec; box-shadow: inset 0 0 0 1px var(--crimson); }
+.mode-title { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--ink); }
+.mode-sub { font-size: 12px; font-style: italic; color: var(--ink-faint); }
+
+@media (max-width: 640px) { .mode-toggle { grid-template-columns: 1fr; }
+
   .step-head { flex-direction: column; }
   .chapter-head { grid-template-columns: auto 1fr; }
   .btn-small { grid-column: 2; justify-self: start; }

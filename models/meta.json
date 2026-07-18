@@ -1,0 +1,20 @@
+{
+  "iris": {
+    "subjects": 45,
+    "images": 441,
+    "test_accuracy": 0.6165,
+    "method": "Fisherfaces (PCA→LDA→SVM)"
+  },
+  "text_en": {
+    "rows": 134198,
+    "test_accuracy": 0.9233,
+    "language": "English",
+    "method": "TF-IDF + Multinomial Naive Bayes"
+  },
+  "text_ar": {
+    "rows": 4837,
+    "test_accuracy": 0.8767,
+    "language": "Arabic",
+    "method": "TF-IDF + Multinomial Naive Bayes"
+  }
+}
